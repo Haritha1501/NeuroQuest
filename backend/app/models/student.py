@@ -40,13 +40,13 @@ class StudentResponse(BaseModel):
 
 class Questionnaire20ResponseInput(BaseModel):
     responses: Dict[str, Any] = Field(
-        description="Responses to all 20 questions (q1 to q20)"
+        description="Responses to baseline screening questions"
     )
-    current_question: Optional[int] = 20
+    current_question: Optional[int] = None
 
 class QuestionnaireDraftInput(BaseModel):
     responses: Dict[str, Any] = Field(default_factory=dict)
-    current_question: int = Field(default=1, ge=1, le=20)
+    current_question: int = Field(default=1, ge=1, le=50)
     last_updated: Optional[datetime] = None
 
 class BaselineSupportDimension(BaseModel):

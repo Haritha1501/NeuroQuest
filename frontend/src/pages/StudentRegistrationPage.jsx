@@ -388,7 +388,7 @@ const StudentRegistrationPage = () => {
                 </>
               ) : (
                 <>
-                  <span>Continue to 20-Q Screening</span>
+                  <span>Continue to Learning Assessment</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

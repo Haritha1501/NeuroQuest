@@ -108,7 +108,7 @@ const CaregiverDashboardPage = () => {
                 Registered Students & Baseline Assessments
               </h2>
               <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-                Each student has an individualized 20-question educational baseline and accommodation profile.
+                Each student has an individualized learning support and accommodation profile.
               </p>
             </div>
             
@@ -127,7 +127,7 @@ const CaregiverDashboardPage = () => {
               </div>
               <h3 className="text-base font-bold text-slate-800">No Students Registered Yet</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
-                Register a student learner to start the 20-question baseline assessment and configure personalized quests.
+                Register a student learner to start the personalized learning assessment and configure custom quests.
               </p>
               <button
                 onClick={() => navigate('/student-registration')}
@@ -195,7 +195,7 @@ const CaregiverDashboardPage = () => {
                         onClick={() => navigate(`/student-screening/${stud.id}`)}
                         className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
                       >
-                        <span>Complete 20-Q Baseline</span>
+                        <span>Complete Assessment</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     )}

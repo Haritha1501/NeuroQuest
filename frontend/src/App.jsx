@@ -17,6 +17,8 @@ import CaregiverDashboardPage from './pages/CaregiverDashboardPage';
 import StudentRegistrationPage from './pages/StudentRegistrationPage';
 import StudentScreeningPage from './pages/StudentScreeningPage';
 import StudentProfileResultPage from './pages/StudentProfileResultPage';
+import SkillForgeCalibrationPage from './pages/SkillForgeCalibrationPage';
+import SkillForgeMasteryPage from './pages/SkillForgeMasteryPage';
 
 // Dashboards and Games
 import GamesContainer from './games/Games';
@@ -92,6 +94,34 @@ function AppRoutes() {
           <OnboardingCheckRoute>
             <ProgressPage />
           </OnboardingCheckRoute>
+        }
+      />
+
+      {/* SkillForge Calibration: 3-Minute Adaptive Diagnostic */}
+      <Route
+        path="/calibration"
+        element={
+          <ProtectedRoute>
+            <SkillForgeCalibrationPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* SkillForge Mastery Game & Dynamic Skill Map */}
+      <Route
+        path="/mastery"
+        element={
+          <ProtectedRoute>
+            <SkillForgeMasteryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/skill-map"
+        element={
+          <ProtectedRoute>
+            <SkillForgeMasteryPage />
+          </ProtectedRoute>
         }
       />
 

@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { 
   Sparkles, BookOpen, Calculator, Globe, Music, Cpu, Palette,
   Award, Play, ArrowRight, Star, Flame, CheckCircle, Rocket,
-  GraduationCap, BookCheck, ExternalLink, X, CheckCircle2, Layers
+  GraduationCap, BookCheck, ExternalLink, X, CheckCircle2, Layers,
+  Compass, Zap
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -11,7 +12,8 @@ import { useSensory } from '../context/SensoryContext';
 import { 
   getProgressSummary, getTasks, getDailyWelcomeMission, 
   getPersonalGameWorld, getPersonalMasteryTree,
-  getNCERTSyllabus, getNCERTStandards, getStudent
+  getNCERTSyllabus, getNCERTStandards, getStudent,
+  getCalibrationStatus
 } from '../services/api';
 import ThemeBanner from '../components/dashboard/ThemeBanner';
 import PersonalWorldMap from '../components/dashboard/PersonalWorldMap';
@@ -44,6 +46,7 @@ const LearnerHomePage = () => {
   const [dailyWelcome, setDailyWelcome] = useState(null);
   const [gameWorld, setGameWorld] = useState(null);
   const [masteryTree, setMasteryTree] = useState(null);
+  const [calibrationStatus, setCalibrationStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // NCERT Standard & Syllabus state (read active student grade)
@@ -66,13 +69,14 @@ const LearnerHomePage = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [progRes, tasksRes, welcomeRes, worldRes, treeRes, stdRes] = await Promise.all([
+      const [progRes, tasksRes, welcomeRes, worldRes, treeRes, stdRes, calibRes] = await Promise.all([
         getProgressSummary().catch(() => ({ data: { total_stars: 10, total_tasks_completed: 0, streak_days: 1 } })),
         getTasks(null, null, selectedGrade).catch(() => ({ data: [] })),
         getDailyWelcomeMission().catch(() => ({ data: null })),
         getPersonalGameWorld().catch(() => ({ data: null })),
         getPersonalMasteryTree().catch(() => ({ data: null })),
-        getNCERTStandards().catch(() => ({ data: { standards: [] } }))
+        getNCERTStandards().catch(() => ({ data: { standards: [] } })),
+        getCalibrationStatus().catch(() => ({ data: null }))
       ]);
       
       if (progRes?.data) setProgress(progRes.data);
@@ -82,6 +86,7 @@ const LearnerHomePage = () => {
       if (welcomeRes.data) setDailyWelcome(welcomeRes.data);
       if (worldRes.data) setGameWorld(worldRes.data);
       if (treeRes.data) setMasteryTree(treeRes.data);
+      if (calibRes?.data) setCalibrationStatus(calibRes.data);
       if (stdRes.data?.standards?.length) {
         setStandardsList(stdRes.data.standards);
       }
@@ -150,6 +155,94 @@ const LearnerHomePage = () => {
         
         {/* Hero Personalized Banner */}
         <ThemeBanner learnerName={learnerName} totalStars={totalStars} />
+
+        {/* SkillForge Calibration Prompt (First-time or not completed) */}
+        {calibrationStatus && !calibrationStatus.calibration_completed && (
+          <div className="bg-gradient-to-r from-violet-700 via-purple-700 to-indigo-800 text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-purple-400/30 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div className="space-y-2 max-w-xl z-10">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 bg-white/20 text-white font-black rounded-full text-[11px] uppercase tracking-wider backdrop-blur-sm border border-white/20">
+                  🎯 Quest 00 • Calibration
+                </span>
+                <span className="text-purple-200 text-xs font-semibold">3-Minute Adaptive Diagnostic</span>
+              </div>
+              <h3 className="text-2xl font-black tracking-tight">
+                Discover Your Skill Map
+              </h3>
+              <p className="text-purple-100 text-xs sm:text-sm font-medium leading-relaxed">
+                Take a quick 3-minute diagnostic (3–5 adaptive questions) so NeuroQuest can pinpoint your strengths and tailor quests directly to your level!
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 z-10">
+              <button
+                onClick={() => navigate('/calibration')}
+                className="px-6 py-3.5 bg-white text-purple-900 hover:bg-purple-50 font-black text-xs sm:text-sm rounded-2xl shadow-lg transition-all flex items-center gap-2 transform active:scale-95 hover:scale-105"
+              >
+                <Sparkles className="w-4 h-4 text-purple-600" />
+                <span>Launch SkillForge (3 min)</span>
+                <ArrowRight className="w-4 h-4 text-purple-700" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* SkillForge Calibration Completed Quick Card */}
+        {calibrationStatus && calibrationStatus.calibration_completed && (
+          <div className="bg-white rounded-3xl px-6 py-4 border border-purple-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-purple-950 uppercase tracking-wide">SkillForge Calibrated</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Active Profile</span>
+                </div>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                  Recommended starting point: <strong className="text-purple-700">{calibrationStatus.skill_profile?.recommended_starting_point?.title || 'Personalized Path'}</strong>
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate('/calibration')}
+              className="px-4 py-2 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all flex items-center gap-1.5 self-start sm:self-auto shrink-0 shadow-sm"
+            >
+              <span>View Skill Map / Recalibrate</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {/* SkillForge Mastery Game Banner */}
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-indigo-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+          <div className="space-y-2 max-w-xl z-10">
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 bg-indigo-500/30 text-indigo-300 font-black rounded-full text-[11px] uppercase tracking-wider backdrop-blur-sm border border-indigo-400/30 flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5 text-indigo-400" />
+                SkillForge Mastery Game
+              </span>
+              <span className="text-purple-300 text-xs font-semibold">Real Learning Driven Progression</span>
+            </div>
+            <h3 className="text-2xl font-black tracking-tight">
+              Enter The Skill Universe
+            </h3>
+            <p className="text-slate-300 text-xs sm:text-sm font-medium leading-relaxed">
+              Every quest, unlock, and evolution is driven strictly by demonstrated knowledge. Master skills to unlock gates, evolve your skill tree, and conquer the OOP Boss Challenge.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 z-10">
+            <button
+              onClick={() => navigate('/mastery')}
+              className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm rounded-2xl shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2 transform active:scale-95 hover:scale-105"
+            >
+              <Zap className="w-4 h-4 text-amber-300 fill-current" />
+              <span>Launch Mastery Universe</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
 
         {/* Phase 3 Personalized Daily Return Experience Mission */}
         {dailyWelcome && (

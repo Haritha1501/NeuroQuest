@@ -21,7 +21,11 @@ from app.routers import (
     ai_mentor as ai_mentor_router,
     ai_assist as ai_assist_router,
     students as students_router,
-    rag as rag_router
+    rag as rag_router,
+    calibration as calibration_router,
+    mastery_game as mastery_game_router,
+    skill_map as skill_map_router,
+    intelligence_layer as intelligence_layer_router
 )
 
 # Relational SQLAlchemy API endpoints
@@ -81,6 +85,10 @@ app.include_router(medical_router.router)
 app.include_router(ai_mentor_router.router)
 app.include_router(ai_assist_router.router)
 app.include_router(rag_router.router)
+app.include_router(calibration_router.router)
+app.include_router(mastery_game_router.router)
+app.include_router(skill_map_router.router)
+app.include_router(intelligence_layer_router.router)
 
 # Attach Relational /api-less endpoints for compatibility
 app.include_router(api_auth.router)

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Sparkles, HelpCircle, CheckCircle2, XCircle, RefreshCw, ArrowRight, Lightbulb, Volume2 } from 'lucide-react';
 import AudioButton from '../common/AudioButton';
+import GamifiedAvatar from '../common/GamifiedAvatar';
+import AnimatedFeedbackMessenger from '../common/AnimatedFeedbackMessenger';
 import { useTheme } from '../../context/ThemeContext';
 import { getAIExplanation } from '../../services/api';
 
@@ -12,22 +14,44 @@ const TaskCard = ({ task, onAnswerSubmit, loading }) => {
   const [aiHint, setAiHint] = useState('');
   const [loadingAi, setLoadingAi] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [avatarState, setAvatarState] = useState('idle');
+  const [avatarMessage, setAvatarMessage] = useState(null);
+
+  React.useEffect(() => {
+    setSelectedOption('');
+    setActiveHintIndex(null);
+    setAiHint('');
+    setFeedback(null);
+    setAvatarState('idle');
+    setAvatarMessage(null);
+  }, [task?.id]);
 
   if (!task) return null;
 
   const handleOptionSelect = (opt) => {
     if (feedback) return; // locked after submission until next
     setSelectedOption(opt);
+    setAvatarState('answering');
+    setAvatarMessage(`Selected: "${opt}". Ready to submit?`);
   };
 
   const handleSubmit = async () => {
     if (!selectedOption) return;
     const res = await onAnswerSubmit(selectedOption);
     setFeedback(res);
+    if (res?.is_correct) {
+      setAvatarState('correct');
+      setAvatarMessage("Spot on! Your brain just mastered this concept!");
+    } else {
+      setAvatarState('wrong');
+      setAvatarMessage("Great attempt! Mistakes help our neurons grow — check the guide below!");
+    }
   };
 
   const handleFetchAiHint = async () => {
     setLoadingAi(true);
+    setAvatarState('thinking');
+    setAvatarMessage("Pondering the clues... analyzing the concept!");
     try {
       const interests = profile?.interests || ['Space', 'Animals'];
       const res = await getAIExplanation({
@@ -68,6 +92,15 @@ const TaskCard = ({ task, onAnswerSubmit, loading }) => {
         </div>
 
         <AudioButton text={`${task.title}. Question: ${task.question}`} label="Read Question" />
+      </div>
+
+      {/* Gamified Learning Companion Avatar */}
+      <div className="bg-gradient-to-r from-indigo-50/60 via-purple-50/30 to-slate-50 p-3 sm:p-3.5 rounded-2xl border border-indigo-100/70">
+        <GamifiedAvatar 
+          state={avatarState} 
+          message={avatarMessage} 
+          size="md"
+        />
       </div>
 
       {/* Question Title & Prompt */}
@@ -233,74 +266,31 @@ const TaskCard = ({ task, onAnswerSubmit, loading }) => {
         </div>
       )}
 
-      {/* Feedback Banner */}
+      {/* Animated Feedback Messenger: Bird or Mentor swoops in and announces Right or Wrong */}
       {feedback && (
-        <div
-          className={`p-5 rounded-2xl border-2 space-y-3 transition-all ${
+        <AnimatedFeedbackMessenger
+          isCorrect={feedback.is_correct}
+          feedbackMessage={
             feedback.is_correct
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-              : 'bg-rose-50 border-rose-300 text-rose-950'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="font-extrabold text-base flex items-center gap-2">
-              {feedback.is_correct ? (
-                <>
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <span>🎉 Splendid Work! Correct!</span>
-                </>
-              ) : (
-                <>
-                  <XCircle className="w-5 h-5 text-rose-600 shrink-0" />
-                  <span>❌ Not Quite Right — Let's Review</span>
-                </>
-              )}
-            </span>
-            <AudioButton
-              text={
-                feedback.is_correct
-                  ? `Correct! ${feedback.explanation || task.explanation}`
-                  : `Incorrect. You chose ${selectedOption}, but the correct answer is ${feedback.correct_answer || task.correct_answer}. ${feedback.explanation || task.explanation}`
-              }
-              label="Read Feedback"
-            />
-          </div>
-
-          {!feedback.is_correct ? (
-            <div className="space-y-2.5">
-              <p className="text-sm font-semibold text-rose-900 leading-normal">
-                You selected <span className="line-through font-bold text-rose-950">"{selectedOption}"</span>, but the correct answer is <span className="font-extrabold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-200">"{feedback.correct_answer || task.correct_answer}"</span>.
-              </p>
-              <div className="text-xs text-slate-800 bg-white/90 p-3.5 rounded-xl border border-rose-200 font-medium leading-relaxed">
-                <span className="font-bold text-rose-800 block mb-1">Curriculum Concept Explanation:</span>
-                {feedback.explanation || task.explanation}
-              </div>
-              <div className="pt-1 flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFeedback(null);
-                    setSelectedOption('');
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 transition-colors shadow-sm"
-                >
-                  <RefreshCw className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Try Answering Again</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-emerald-900">
-                {feedback.feedback_message || `Great job! "${selectedOption}" is correct.`}
-              </p>
-              <div className="text-xs text-slate-800 bg-white/90 p-3.5 rounded-xl border border-emerald-200 font-medium leading-relaxed">
-                <span className="font-bold text-emerald-800 block mb-1">Explanation:</span>
-                {feedback.explanation || task.explanation}
-              </div>
-            </div>
-          )}
-        </div>
+              ? (feedback.feedback_message || `Great job! "${selectedOption}" is the correct answer.`)
+              : (feedback.feedback_message || `Let's inspect the concept and try again!`)
+          }
+          selectedAnswer={selectedOption}
+          correctAnswer={feedback.correct_answer || task.correct_answer}
+          explanation={feedback.explanation || task.explanation}
+          onClose={() => {
+            setFeedback(null);
+            setSelectedOption('');
+            setAvatarState('idle');
+            setAvatarMessage(null);
+          }}
+          onRetry={() => {
+            setFeedback(null);
+            setSelectedOption('');
+            setAvatarState('idle');
+            setAvatarMessage('Ready for another go! You can do this!');
+          }}
+        />
       )}
 
     </div>

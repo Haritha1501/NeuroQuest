@@ -7,6 +7,7 @@ import BuildTheSequence from './BuildTheSequence';
 import FindTheSignal from './FindTheSignal';
 import BossQuestion from './BossQuestion';
 import MissionMap from './MissionMap';
+import GamifiedAvatar from '../components/common/GamifiedAvatar';
 
 // NCERT Class 7 Science & Math Curriculum Datasets for Mini-Challenges
 const CURRICULUM_DATA = {
@@ -238,6 +239,25 @@ export default function GamesContainer() {
           >
             🗺️ Mission Map
           </button>
+        </div>
+
+        {/* Companion Avatar Guide */}
+        <div className="bg-white p-3.5 sm:p-4 rounded-3xl border border-slate-200/90 shadow-sm flex items-center justify-between">
+          <GamifiedAvatar 
+            state={activeGameTab === 'boss' ? 'thinking' : activeGameTab === 'map' ? 'idle' : 'answering'}
+            size="md"
+            message={
+              activeGameTab === 'boss'
+                ? "Conquer the boss question to prove your mastery!"
+                : activeGameTab === 'match'
+                ? "Match corresponding concepts — take your time!"
+                : activeGameTab === 'sequence'
+                ? "Arrange the scientific order step by step!"
+                : activeGameTab === 'signal'
+                ? "Find the target term hidden in the noise!"
+                : "Explore your learning path milestone by milestone."
+            }
+          />
         </div>
 
         {/* Active Mini-Challenge Container */}

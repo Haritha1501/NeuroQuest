@@ -84,6 +84,18 @@ const Navbar = () => {
                 </Link>
 
                 <Link
+                  to="/mastery"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all ${
+                    isActive('/mastery')
+                      ? 'bg-white text-purple-700 shadow-sm font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                  }`}
+                >
+                  <Compass className="w-4 h-4 text-purple-600" />
+                  <span>Skill Universe</span>
+                </Link>
+
+                <Link
                   to="/games"
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all ${
                     isActive('/games')
@@ -317,6 +329,16 @@ const Navbar = () => {
           >
             <BookOpen className="w-4 h-4" />
             <span>Quest Room</span>
+          </Link>
+          <Link
+            to="/mastery"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold ${
+              isActive('/mastery') ? 'bg-purple-50 text-purple-700' : 'text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <Compass className="w-4 h-4 text-purple-600" />
+            <span>Skill Universe</span>
           </Link>
           <Link
             to="/games"

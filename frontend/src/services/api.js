@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = rawBaseUrl.startsWith('http') && !rawBaseUrl.endsWith('/api')
+  ? `${rawBaseUrl.replace(/\/$/, '')}/api`
+  : rawBaseUrl;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -97,5 +100,41 @@ export const saveStudentQuestionnaireDraft = (studentId, draftData) => api.post(
 export const completeStudentQuestionnaire = (studentId, submissionData) => api.post(`/students/${studentId}/questionnaire/complete`, submissionData);
 export const getStudentBaselineProfile = (studentId) => api.get(`/students/${studentId}/baseline-profile`);
 
+// SkillForge Calibration: 3-Minute Adaptive Diagnostic & Knowledge Profiling
+export const getCalibrationStatus = () => api.get('/calibration/status');
+export const startCalibration = () => api.post('/calibration/start');
+export const submitCalibrationAnswer = (data) => api.post('/calibration/answer', data);
+export const getCalibrationResult = () => api.get('/calibration/result');
+export const recalibrateSkills = () => api.post('/calibration/recalibrate');
+
+// SkillForge Mastery Game: Skill-Based Gamification Driven by Demonstrated Learning
+export const getMasteryUniverse = () => api.get('/mastery/universe');
+export const getSkillDetails = (skillId) => api.get(`/mastery/skills/${skillId}`);
+export const getRecommendedMasteryQuest = () => api.get('/mastery/quests/recommended');
+export const getMasteryQuest = (questId) => api.get(`/mastery/quests/${questId}`);
+export const evaluateQuestAttempt = (questId, payload) => api.post(`/mastery/quests/${questId}/evaluate`, payload);
+export const getBossChallenge = () => api.get('/mastery/boss');
+export const evaluateBossChallenge = (payload) => api.post('/mastery/boss/evaluate', payload);
+export const getMasteryProfile = () => api.get('/mastery/profile');
+
+// Feature 2: Dynamic Skill Map / Learner Knowledge Graph
+export const getDynamicSkillMap = () => api.get('/skills/map');
+export const getLearnerSkillMap = () => api.get('/learner/skill-map');
+export const getLearnerFocusSkills = () => api.get('/learner/focus-skills');
+export const getSkillNodeDetail = (skillId) => api.get(`/skills/${skillId}`);
+export const getSkillProgress = (skillId) => api.get(`/skills/${skillId}/progress`);
+export const getSkillPrerequisites = (skillId) => api.get(`/skills/${skillId}/prerequisites`);
+
+// Features 3, 7, 10, 11, 14: SkillForge Intelligence Layer
+export const getNextBestSkill = (learnerId) => api.get('/intelligence/next-best-skill', { params: learnerId ? { learner_id: learnerId } : {} });
+export const getSkillRevivalAssessment = (skillId, learnerId) => api.get(`/intelligence/revival/${skillId}`, { params: learnerId ? { learner_id: learnerId } : {} });
+export const submitSkillRevival = (skillId, answers, learnerId) => api.post(`/intelligence/revival/${skillId}/submit`, { answers }, { params: learnerId ? { learner_id: learnerId } : {} });
+export const askAIMentor = (data, learnerId) => api.post('/intelligence/mentor/ask', data, { params: learnerId ? { learner_id: learnerId } : {} });
+export const getInclusiveAdaptiveProfile = (learnerId) => api.get('/intelligence/adaptive-profile', { params: learnerId ? { learner_id: learnerId } : {} });
+export const updateInclusiveAdaptiveProfile = (updates, learnerId) => api.post('/intelligence/adaptive-profile', updates, { params: learnerId ? { learner_id: learnerId } : {} });
+export const getIntelligencePersonas = () => api.get('/intelligence/personas');
+export const activateIntelligencePersona = (personaId) => api.post(`/intelligence/personas/${personaId}/activate`);
+
 export default api;
+
 

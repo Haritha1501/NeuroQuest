@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AnimatedFeedbackMessenger from '../components/common/AnimatedFeedbackMessenger';
 
 const BossQuestion = ({ 
   difficulty = 'easy', 
@@ -29,6 +30,9 @@ const BossQuestion = ({
   const revealHintManual = () => {
     setShowHint(true);
   };
+
+  const selectedOptionObj = options.find(o => o.id === selectedOption);
+  const correctOptionObj = options.find(o => o.isCorrect);
 
   return (
     <div className="p-6 bg-orange-50 rounded-xl max-w-3xl mx-auto shadow-sm">
@@ -90,16 +94,28 @@ const BossQuestion = ({
         })}
       </div>
 
-      {isCorrect === true && (
-        <div className="mt-8 p-4 bg-green-50 rounded-lg text-center animate-fade-in">
-          <p className="text-xl font-bold text-green-800 mb-2">Incredible!</p>
-          <p className="text-green-700">You've mastered this concept.</p>
-        </div>
-      )}
-
-      {isCorrect === false && (
-        <div className="mt-4 text-center">
-          <p className="text-red-500 font-medium">Not quite right. Take a deep breath and try another option.</p>
+      {/* Fly-in Bird or Mentor Messenger for Right or Wrong verdict */}
+      {isCorrect !== null && (
+        <div className="mt-6">
+          <AnimatedFeedbackMessenger
+            isCorrect={isCorrect}
+            feedbackMessage={
+              isCorrect
+                ? "You conquered the Boss Challenge! Masterful understanding demonstrated!"
+                : "Not quite the right answer for this boss question, but mistakes make us smarter!"
+            }
+            selectedAnswer={selectedOptionObj?.text}
+            correctAnswer={correctOptionObj?.text}
+            explanation={hints[0] || "Review the core curriculum clues above to conquer this concept!"}
+            onClose={() => {
+              setIsCorrect(null);
+              setSelectedOption(null);
+            }}
+            onRetry={() => {
+              setIsCorrect(null);
+              setSelectedOption(null);
+            }}
+          />
         </div>
       )}
     </div>

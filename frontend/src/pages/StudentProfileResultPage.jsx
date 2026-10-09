@@ -92,7 +92,7 @@ const StudentProfileResultPage = () => {
               onClick={() => navigate(`/student-screening/${studentId}`)}
               className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-2xl shadow-md text-sm"
             >
-              Start 20-Q Assessment
+              Start Learning Assessment
             </button>
             <button
               onClick={() => navigate('/caregiver')}

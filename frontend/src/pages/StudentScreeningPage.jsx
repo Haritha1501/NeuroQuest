@@ -233,7 +233,7 @@ const StudentScreeningPage = () => {
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Product Baseline v1 • Strictly Non-Diagnostic
+                  Personalized Learning Profile • Non-Diagnostic
                 </span>
                 {draftStatus && (
                   <span className="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
@@ -242,10 +242,10 @@ const StudentScreeningPage = () => {
                 )}
               </div>
               <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                {studentFirstName}'s Learning Support & Personalization Baseline
+                {studentFirstName}'s Learning Support & Personalization
               </h1>
               <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-                {student?.grade} • Age {student?.age} • Caregiver Onboarding Assessment
+                {student?.grade} • Age {student?.age} • Quick Caretaker Setup
               </p>
             </div>
 
@@ -318,22 +318,17 @@ const StudentScreeningPage = () => {
 
         {/* Active Question Card */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-9 space-y-7 transition-all">
-          {/* Category Badge, Dataset Provenance & Audio Read-Aloud */}
+          {/* Category Badge & Audio Read-Aloud */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-extrabold uppercase tracking-wider border border-indigo-100">
-                Dimension: {currentQuestion.category || 'Educational Support'}
+              <span className="px-3.5 py-1.5 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold border border-indigo-100/90 flex items-center gap-1.5 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                {currentQuestion.category || 'Learning Preference'}
               </span>
-              {currentQuestion.dataset_source && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200/80 rounded-xl text-xs font-semibold">
-                  <Database className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span className="text-slate-500 font-normal">Provenance:</span> {currentQuestion.dataset_source}
-                </span>
-              )}
             </div>
 
             <AudioButton
-              text={`Question ${currentIndex + 1}. ${currentQuestion.prompt}. ${currentQuestion.personalization_impact ? `Impact: ${currentQuestion.personalization_impact}` : ''}`}
+              text={`Question ${currentIndex + 1}. ${currentQuestion.prompt}. ${currentQuestion.personalization_impact ? `How this helps: ${currentQuestion.personalization_impact}` : ''}`}
               label="Listen Question"
             />
           </div>
@@ -347,13 +342,13 @@ const StudentScreeningPage = () => {
               <div className="p-3.5 bg-indigo-50/70 border border-indigo-100 rounded-2xl text-xs text-indigo-950 flex items-start gap-2.5">
                 <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-extrabold text-indigo-900">Personalized Learning Impact: </span>
+                  <span className="font-extrabold text-indigo-900">How this personalizes the app: </span>
                   <span className="text-indigo-800 font-medium">{currentQuestion.personalization_impact}</span>
                 </div>
               </div>
             )}
             <p className="text-slate-500 text-xs sm:text-sm">
-              Select the option that best reflects observed learning behavior during educational activities.
+              Choose the option that best matches what works best for your student.
             </p>
           </div>
 

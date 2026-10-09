@@ -1,4 +1,7 @@
 services:
+  # -------------------------------------------------------------
+  # 1. FastAPI Python Backend Web Service
+  # -------------------------------------------------------------
   - type: web
     name: neuroquest-api
     runtime: python
@@ -6,12 +9,34 @@ services:
     plan: free
     buildCommand: pip install -r backend/requirements.txt
     startCommand: python backend/run.py
+    healthCheckPath: /api/health
     envVars:
       - key: PORT
-        value: 8000
+        value: 10000
       - key: DATABASE_URL
         value: postgresql://neondb_owner:npg_rzHeNO6QRlX4@ep-aged-heart-b52ll5dt-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       - key: JWT_SECRET
         value: neuroquest_super_secret_production_key_2026
       - key: PYTHON_VERSION
         value: 3.11.9
+      - key: RELOAD
+        value: "false"
+
+  # -------------------------------------------------------------
+  # 2. React Vite Frontend Static Site
+  # -------------------------------------------------------------
+  - type: static_site
+    name: neuroquest-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: neuroquest-api
+          property: url
