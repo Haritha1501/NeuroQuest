@@ -25,8 +25,9 @@ services:
   # -------------------------------------------------------------
   # 2. React Vite Frontend Static Site
   # -------------------------------------------------------------
-  - type: static_site
+  - type: web
     name: neuroquest-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
